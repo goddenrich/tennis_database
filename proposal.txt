@@ -1,0 +1,58 @@
+// ?=may not inclued *=may be a calculated field instead
+Tournaments
+  -name
+  -location
+  -#players
+  -surface?
+  -start_date
+  -end_date
+  -#spectators*
+Players
+  -name
+  -home
+  -dob
+  -handed
+  -gender
+  -height
+  -weight
+  -serve_speed
+  -ranking
+  -grand_slams_won*
+  -points(ATP)
+Matches
+  -players
+  -winner
+  -looser
+  -date
+  -start_time
+  _end_time
+  -duration?
+  -score
+  -player1_aces*
+  -player2_aces*
+  -#spectators
+  -etc...
+Spectators
+  -age
+  -email
+  -address
+  -name
+  -telephone
+  -gender
+  -country_of_origin
+  -special_assistance
+Tickets
+  -id
+  -price
+  -date_of_sale
+  -promotion_code
+  -match
+  -valid_date_start
+  -valid_date_end
+  -ticket_type(all day)
+  -court
+  -seat
+  -used_or_not
+Courts/stadium
+  -surface
+  -etc.
