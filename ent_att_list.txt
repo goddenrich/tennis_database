@@ -1,0 +1,94 @@
+// ?=may not inclued *=may be a calculated field instead
+Tournaments
+  -name
+  -tournament_ID
+  -location
+  -#players(in draw)
+  -surface?
+  -start_date
+  -end_date
+  -#spectators*
+  -tournament_level?
+  -type(knockout, pool, etc..)
+  -prize_money(per level of depth?)
+Players
+  -name/id
+  -home
+  -dob/age
+  -handed
+  -gender
+  -height
+  -weight
+  -serve_speed
+  -scaled_ranking_scores(at service, baseline, net, passing shots, etc...)*
+  -ranking_ATP
+  -seed_in_tournament(sometimes different from ranking)
+  -net_worth_from_sponsors?
+  -net_worth_from_tournaments*
+  -grand_slams_won*
+  -injured?
+  -year_turned_pro
+  -points(ATP)
+Matches
+  -best_of
+  -match_ID
+  -number/round
+  -name_of_judge/judges
+  -players (rankings?)
+  -winner
+  -loser
+  -date
+  -start_time
+  _end_time
+  -duration?*
+  -score
+  -#spectators
+  -sets/games/points (per player)
+  -aces(per player)
+  -double faults(per player)
+  -average_serve_speed(per player)
+  -service points won(per player)
+  -winners(per player)
+  -unforced errors(per player)
+  -number of break points(per player)
+  -%break points won(per player)
+  -break points saved(per player)*
+  -match points(%, saved) (per player)
+  -forfeited_yes_no
+Spectators
+  -age
+  -email
+  -address
+  -name
+  -telephone
+  -gender
+  -country_of_origin
+  -special_assistance
+  -past_attendance/number
+  -banned_or_not
+Tickets
+  -id
+  -name_of_ticket_holder
+  -price
+  -date_of_sale
+  -promotion_code
+  -match
+  -valid_date_start
+  -valid_date_end
+  -ticket_type(all day)
+  -court
+  -seat
+  -used_or_not
+  -section
+Courts/stadium
+  -surface
+  -spectator_capacity
+  -entrance_exit_points
+  -height/number_of_levels
+  -indoor/outdoor
+  -retractable roof
+  -HawkEye
+  -dimensions?(should be constant)
+  -sponsor
+  -number_of_cameras
+  -colour
