@@ -1,7 +1,7 @@
 
 
 Paragraph:
-The database will be storing information for tennis tournaments, in the point 
+The database will be storing information for singles tennis tournaments, in the point 
 of view of a tournament organiser/data provider. There will be six entities:
 Tournament, Players, Matches, Stadiums/Courts, Spectators and Tickets.
 The organisation aspect will involve court numbers/tickets and spectators,
@@ -15,8 +15,9 @@ ticket prices, and spectator statistics.
 Challenges will involve the large number of features we will have to include in
 this database, as well as looking at the relationships between the entity sets.
 Some are not so obvious, particularly with the tickets (can be different types),
-not necessarily one to one relationships (1 ticket may not be to 1 match).
-
+not necessarily one to one relationships (1 ticket may not be to 1 match) and 
+name changes etc. Additionally how to deal with suspended matches that possibly 
+move courts/days.
 
 
 
