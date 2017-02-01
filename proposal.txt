@@ -28,8 +28,6 @@ tennis_atp github. The spectator and ticket details may require further research
 
 
 
-E-R diagram: To do
-
 
 Contingency plan: Deal only with the players/matches/tournaments and maybe
 courts, as the data is already there in csv's.

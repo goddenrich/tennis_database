@@ -1,0 +1,47 @@
+// ?=may not inclued *=may be a calculated field instead
+Tournaments
+  -name
+  -tournament_ID
+  -location
+  -#players(in draw)
+  -start_date
+  -end_date
+Players
+  -name/id
+  -home
+  -dob/age
+  -gender
+  -height
+  -weight
+  -points(ATP)
+Matches
+  -best_of
+  -match_ID
+  -number/round
+  -winner
+  -loser
+  -date
+  -start_time
+  _end_time
+  -score
+  -sets/games/points (per player)
+  -forfeited_yes_no
+Spectators
+  -age
+  -address
+  -name
+  -telephone
+  -gender
+  -special_assistance
+Tickets
+  -id
+  -price
+  -date_of_sale
+  -ticket_type(all day)
+  -seat
+  -used_or_not
+Courts/stadium
+  -surface
+  -spectator_capacity
+  -indoor/outdoor
+  -HawkEye
