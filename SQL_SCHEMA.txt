@@ -1,23 +1,12 @@
 CREATE TABLE Tournaments
        (name CHAR(VAR) NOT NULL,
         tournament_ID CHAR(8) NOT NULL,
-        complex_name CHAR(VAR) NOT NULL,
-        start_date DATE NOT NULL,
-        end_date DATE,
         PRIMARY KEY (Tournament_ID))
 
 CREATE TABLE Matches
        (match_ID INTEGER NOT NULL,
-        player1_ID INTEGER NOT NULL,
-        player2_ID INTEGER NOT NULL,
-        winner INTEGER,
-        start_date_time DATE-TIME,
-        end_date_time DATE-TIME,
         best_of INTEGER NOT NULL,
-        round_number INTEGER NOT NULL,
-        completed BOOLEAN NOT NULL,
-        forfeited BOOLEAN NOT NULL,
-        score CHAR(VAR),
+        round_num INTEGER NOT NULL,
         PRIMARY KEY (match_ID))
         
 
@@ -35,30 +24,32 @@ CREATE TABLE Complex
         country_code CHAR(3),
         PRIMARY KEY (complex_name))
 
-CREATE TABLE match_played_on_court
+CREATE TABLE Played_On
        (court_ID INTEGER,
         match_ID INTEGER NOT NULL,
+        start_dt DATE-TIME NOT NULL,
+        end_dt DATE-TIME,
         PRIMARY KEY (match_ID),
         FOREIGN KEY (court_ID) REFERENCES Courts,
         FOREIGN KEY (match_ID) REFERENCES Matches)
 
-CREATE TABLE match_part_of_tournament
+CREATE TABLE Part_Of
        (tournament_ID CHAR(8) NOT NULL,
         match_ID INTEGER NOT NULL,
         PRIMARY KEY (match_ID),
         FOREIGN KEY (Tournament_ID) REFERENCES Courts,
         FOREIGN KEY (match_ID) REFERENCES Matches)
 
-CREATE TABLE court_member_of_complex
+CREATE TABLE Member_Of
        (court_ID INTEGER NOT NULL,
         complex_name CHAR(VAR) NOT NULL,
-        court_number INTEGER
+        court_num INTEGER,
         PRIMARY KEY (court_ID),
         FOREIGN KEY (complex_name) REFERENCES Complex,
         FOREIGN KEY (court_ID) REFERENCES Courts)
 
 CREATE TABLE Players
-	(player_ID INTEGER,
+       (player_ID INTEGER NOT NULL,
 	name CHAR(20) NOT NULL,
 	cntry CHAR(3),
 	dob DATE,
@@ -68,35 +59,38 @@ CREATE TABLE Players
 	ranking_points INTEGER NOT NULL,
 	PRIMARY KEY (player_ID))
 
-CREATE TABLE Play_in
-	(player_ID INTEGER NOT NULL,
+CREATE TABLE Play_In
+       (player_ID INTEGER NOT NULL,
 	match_ID INTEGER NOT NULL,
+        player_number INTEGER NOT NULL,
+        winner BOOL,
+        forefited BOOL,
+        score CHAR(VAR),
 	PRIMARY KEY (player_ID, match_ID),
 	FOREIGN KEY (player_ID) REFERENCES Players,
-	FOREIGN KEY (match_ID) REFERENCES Matches)
+	FOREIGN KEY (match_ID) REFERENCES Matches,
+        UNIQUE (match_ID, winner))
 
 CREATE TABLE Tickets
-	(ticket_id INTEGER NOT NULL,
-	spectator_name CHAR(20) NOT NULL,
+       (ticket_id INTEGER NOT NULL,
 	buyer_name CHAR(20) NOT NULL,
 	price REAL NOT NULL,
 	date_of_sale DATE,
-	seat CHAR(var) NOT NULL,
 	used BOOL NOT NULL,
 	PRIMARY KEY (ticket_id))
 
-CREATE TABLE For
-	(ticket_ID INTEGER,
-	match_ID INTEGER,
+CREATE TABLE To_Watch
+       (ticket_ID INTEGER NOT NULL,
+	match_ID INTEGER NOT NULL,
 	PRIMARY KEY (ticket_ID, match_ID),
 	FOREIGN KEY (match_ID) REFERENCES Matches,
 	FOREIGN KEY (ticket_ID) REFERENCES Tickets)
 
 CREATE TABLE Spectators
-	(spectator_ID INTEGER,
+       (spectator_ID INTEGER NOT NULL,
 	name CHAR(20) NOT NULL,
 	address CHAR(20),
-	country_origin CHAR(3),
+	country CHAR(3),
 	email CHAR(20),
 	telephone INTEGER,
 	gender CHAR(1),
@@ -104,16 +98,16 @@ CREATE TABLE Spectators
 	PRIMARY KEY(spectator_ID))
 
 CREATE TABLE Reserved_For
-	(spectator_ID INTEGER,
-	ticket_ID INTEGER,
+       (spectator_ID INTEGER NOT NULL,
+	ticket_ID INTEGER NOT NULL,
 	FOREIGN KEY (spectator_ID) REFERENCES Spectators,
 	FOREIGN KEY (ticket_ID) REFERENCES Tickets)
-	
 
-(tournament located in complex)
 CREATE TABLE Located_In
-	(tournament_ID CHAR(8) NOT NULL,
+       (tournament_ID CHAR(8) NOT NULL,
 	complex_name CHAR(VAR) NOT NULL,
+        start_date DATE NOT NULL,
+        end_date DATE,
 	PRIMARY KEY (tournament_ID, complex_name),
 	FOREIGN KEY (tournament_ID) REFERENCES Tournaments,
 	FOREIGN KEY (complex_name) REFERENCES Complex)
