@@ -1,7 +1,7 @@
 // ?=may not inclued *=may be a calculated field instead
 Tournaments
   -name
-  -tournament_ID
+  -tournament_ID (location-based)
   -location
   -#players(in draw)
   -start_date
