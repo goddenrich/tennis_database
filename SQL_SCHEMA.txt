@@ -1,6 +1,6 @@
 CREATE TABLE Tournaments
        (tournament_ID INTEGER,
-        name CHAR(VAR) NOT NULL,
+        name VARCHAR NOT NULL,
         start_date DATE NOT NULL,
         end_date DATE,
         complex_ID INTEGER NOT NULL,
@@ -34,8 +34,8 @@ CREATE TABLE Played_On
 
 CREATE TABLE Courts
        (court_ID INTEGER,
-        court_name CHAR(VAR) NOT NULL,
-        surface CHAR(VAR),
+        court_name VARCHAR NOT NULL,
+        surface VARCHAR,
         spectator_capacity INTEGER,
         indoor BOOLEAN NOT NULL,
         hawkEye BOOLEAN NOT NULL,
@@ -48,14 +48,14 @@ CREATE TABLE Courts
 
 CREATE TABLE Complex
        (complex_ID INTEGER,
-        complex_name CHAR(VAR) NOT NULL,
-        city CHAR(VAR),
-        country_code CHAR(3),
+        complex_name VARCHAR NOT NULL,
+        city VARCHAR,
+        country CHAR(3),
         PRIMARY KEY (complex_ID))
 
 CREATE TABLE Players
        (player_ID INTEGER,
-	name CHAR(20) NOT NULL,
+	name VARCHAR NOT NULL,
 	country CHAR(3),
 	dob DATE,
 	gender CHAR(1) NOT NULL,
@@ -68,9 +68,9 @@ CREATE TABLE Play_In
        (player_ID INTEGER NOT NULL,
 	match_ID INTEGER NOT NULL,
         player_number INTEGER NOT NULL,
-        winner BOOL,
-        forfeited BOOL,
-        score CHAR(VAR),
+        winner BOOLEAN,
+        forfeited BOOLEAN,
+        score VARCHAR,
 	PRIMARY KEY (player_ID, match_ID),
 	FOREIGN KEY (player_ID) REFERENCES Players,
                 ON DELETE NO ACTION 
@@ -82,11 +82,11 @@ CREATE TABLE Play_In
 
 CREATE TABLE Tickets
        (ticket_ID INTEGER NOT NULL,
-	buyer_name CHAR(VAR) NOT NULL,
+	buyer_name VARCHAR NOT NULL,
 	price REAL NOT NULL,
 	date_of_sale DATE,
-	used BOOL NOT NULL,
-        tier CHAR(VAR),
+	used BOOLEAN NOT NULL,
+        tier VARCHAR,
         match_ID INTEGER NOT NULL,
         spectator_ID INTEGER NOT NULL,
         FOREIGN KEY (spectator_ID) REFERENCES Spectators,
@@ -100,11 +100,11 @@ CREATE TABLE Tickets
 
 CREATE TABLE Spectators
        (spectator_ID INTEGER NOT NULL,
-	name CHAR(20) NOT NULL,
-	address CHAR(20),
+	name VARCHAR NOT NULL,
+	address VARCHAR,
 	country CHAR(3),
-	email CHAR(20),
+	email VARCHAR,
 	telephone INTEGER,
 	gender CHAR(1),
-	special_assistance BOOL,
+	special_assistance BOOLEAN,
 	PRIMARY KEY(spectator_ID))

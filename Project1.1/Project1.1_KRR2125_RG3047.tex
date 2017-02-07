@@ -34,7 +34,7 @@ Richard Godden (RG3047)}
 
 \begin{enumerate}
 
-\item The database will be storing information for singles tennis tournaments, in the point of view of a tournament organiser/data provider. There will be seven entities (revised from the original 6 we brought to the meeting): Tournaments, Players, Matches, Courts, Spectators, Tickets and the newly added Complex. The organisation aspect will involve court numbers/tickets and spectators, whilst data provided will be relevant to player and match stats. Users will be able to query this database to discover player stats and match outcomes (E.g. who won which match, what those match statistics were, what the player statistics in the tournament were, what their overall statistics are, etc..). As well as looking at logistics, enquiries about where the matches are taking place, ticket prices, and spectator statistics. Challenges will involve the large number of features we will have to include in this database, as well as looking at the relationships between the entity sets. Some are not so obvious, particularly with the tickets (can be different types), not necessarily one to one relationships (1 ticket may not be to 1 match) and name changes etc. 
+\item The database will be storing information for singles tennis tournaments, in the point of view of a tournament organiser/data provider. There will be seven entities (revised from the original 6 we brought to the meeting): Tournaments, Players, Matches, Courts, Spectators, Tickets and the newly added Complex. The organisation aspect will involve court numbers/tickets and spectators, whilst data provided will be relevant to player and match stats. Users will be able to query this database to discover player stats and match outcomes (E.g. who won which match, what those match statistics were, what the player statistics in the tournament were, what their overall statistics are, etc..). As well as looking at logistics, enquiries about where the matches are taking place, ticket prices, and spectator statistics. Challenges will involve the large number of features we will have to include in this database, as well as looking at the relationships between the entity sets. Some are not so obvious, particularly with the tickets (can be different types), not necessarily one to one relationships (1 ticket may not be to 1 match) and name changes etc. For now we have restricted this condition to one match per ticket which, we may change in the future.
 
 After meeting with the TA, we made the following revisions:
 \begin{enumerate}[label = (\alph*)]
@@ -55,14 +55,12 @@ We will fill all the player and match data with real data from Jeff Sackmann ten
 \subsection*{Contingency Plan}
 We do not anticipate needing this, but our contingency plan would simply be to take out the Tickets and Spectators entity sets, and simply deal with Players, Matches, Complex, Courts and Tournaments. After our meeting, the TA told us we could even further eliminate one of the sets Courts or Complex if need be.
 
-\subsection*{E-R Diagram}
-\subsection*{SQL Schema}
-
 \newpage
-
+\subsection*{E-R Diagram}
 \includegraphics[width=1.3\textwidth, angle = -90]{ER_tennis_database.png}
 
 \newpage
+\subsection*{SQL Schema}
 \verbatiminput{SQL_SCHEMA.txt}
 
 \newpage
