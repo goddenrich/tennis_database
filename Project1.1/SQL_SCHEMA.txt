@@ -1,5 +1,5 @@
 CREATE TABLE Tournaments
-       (tournament_ID INTEGER,
+       (tournament_ID VARCHAR,
         name VARCHAR NOT NULL,
         start_date DATE NOT NULL,
         end_date DATE,
@@ -13,7 +13,7 @@ CREATE TABLE Matches
        (match_ID INTEGER,
         best_of INTEGER NOT NULL,
         round_num INTEGER NOT NULL,
-        tournament_ID INTEGER NOT NULL,
+        tournament_ID VARCHAR NOT NULL,
         FOREIGN KEY (tournament_ID) REFERENCES Tournaments,
                 ON DELETE CASCADE
                 ON UPDATE CASCADE
@@ -55,24 +55,24 @@ CREATE TABLE Complex
 
 CREATE TABLE Players
        (player_ID INTEGER,
-	name VARCHAR NOT NULL,
-	country CHAR(3),
-	dob DATE,
-	gender CHAR(1) NOT NULL,
-	height REAL,
-	weight REAL,
-	ranking_points INTEGER NOT NULL,
-	PRIMARY KEY (player_ID))
+        name VARCHAR NOT NULL,
+        country CHAR(3),
+        dob DATE,
+        gender CHAR(1) NOT NULL,
+        height REAL,
+        weight REAL,
+        ranking_points INTEGER NOT NULL,
+        PRIMARY KEY (player_ID))
 
 CREATE TABLE Play_In
        (player_ID INTEGER NOT NULL,
-	match_ID INTEGER NOT NULL,
+        match_ID INTEGER NOT NULL,
         player_number INTEGER NOT NULL,
         winner BOOLEAN,
         forfeited BOOLEAN,
         score VARCHAR,
-	PRIMARY KEY (player_ID, match_ID),
-	FOREIGN KEY (player_ID) REFERENCES Players,
+        PRIMARY KEY (player_ID, match_ID),
+        FOREIGN KEY (player_ID) REFERENCES Players,
                 ON DELETE NO ACTION 
                 ON UPDATE CASCADE 
         FOREIGN KEY (match_ID) REFERENCES Matches,
@@ -82,10 +82,10 @@ CREATE TABLE Play_In
 
 CREATE TABLE Tickets
        (ticket_ID INTEGER NOT NULL,
-	buyer_name VARCHAR NOT NULL,
-	price REAL NOT NULL,
-	date_of_sale DATE,
-	used BOOLEAN NOT NULL,
+        buyer_name VARCHAR NOT NULL,
+        price REAL NOT NULL,
+        date_of_sale DATE,
+        used BOOLEAN NOT NULL,
         tier VARCHAR,
         match_ID INTEGER NOT NULL,
         spectator_ID INTEGER NOT NULL,
@@ -95,16 +95,16 @@ CREATE TABLE Tickets
         FOREIGN KEY (match_ID) REFERENCES Matches,
                 ON DELETE NO ACTION
                 ON UPDATE CASCADE
-	PRIMARY KEY (ticket_ID)
+        PRIMARY KEY (ticket_ID)
         UNIQUE (spectator_ID,match_ID))
 
 CREATE TABLE Spectators
        (spectator_ID INTEGER NOT NULL,
-	name VARCHAR NOT NULL,
-	address VARCHAR,
-	country CHAR(3),
-	email VARCHAR,
-	telephone INTEGER,
-	gender CHAR(1),
-	special_assistance BOOLEAN,
-	PRIMARY KEY(spectator_ID))
+        name VARCHAR NOT NULL,
+        address VARCHAR,
+        country CHAR(3),
+        email VARCHAR,
+        telephone INTEGER,
+        gender CHAR(1),
+        special_assistance BOOLEAN,
+        PRIMARY KEY(spectator_ID))
