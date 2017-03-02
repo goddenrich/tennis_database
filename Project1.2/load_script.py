@@ -35,7 +35,7 @@ def load_csv(tourney_year):
 
 
 def to_csv(df, name):
-	df.to_csv('./results_2016/' + name +'.csv', sep=',', index=False)
+	df.to_csv('./results_2017/' + name +'.csv', sep=',', index=False)
 
 def Tournaments(df):
 	t = pd.DataFrame(df[['tourney_id', 'tourney_name', 'tourney_date']])
@@ -129,7 +129,7 @@ def Play_In(df):
 	p['match_ID'] = pd.concat([df['match_ID'], df['match_ID']], ignore_index=True)
 	p['winner'] = pd.concat([pd.DataFrame(np.ones((df.shape[0]))), pd.DataFrame(np.zeros((df.shape[0])))], ignore_index=True)
 	#p['forfeited'] = pd.concat(df[df['score'].str.contains('RET')])
-	p['forfeited'] =  df['score'].apply(lambda x: True if('RET' in str(x)) else False)
+	p['forfeited'] =  pd.concat([df['score'], df['score']], axis=0, ignore_index=True).apply(lambda x: True if('RET' in str(x)) else False)
 	p['score'] = pd.concat([df['score'], df['score']], axis=0, ignore_index=True)
 
 	p = p.drop_duplicates()
@@ -198,13 +198,13 @@ def Spectators(df):
 
 
 def main():
-	df = load_csv('2016')
+	df = load_csv('2017')
 	Tournaments(df)
 	Matches(df)
 	Played_On(df)
 	cap = Courts(df)
 	Complex(df)
-	Players(df, 2016)
+	Players(df, 2017)
 	Play_In(df)
 	t = Tickets(df, cap)
 	Spectators(t)
