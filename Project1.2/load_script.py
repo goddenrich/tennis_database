@@ -11,6 +11,9 @@ from faker import Faker
 from faker import providers
 import math
 
+def hash1(temp):
+	return (hash(temp) % 10**9)
+
 def load_csv(tourney_year):
 	#temp = np.genfromtxt('./data/tennis_atp-master/atp_matches_' + tourney_year + '.csv', delimiter=',')
 	#print(temp)
@@ -20,14 +23,14 @@ def load_csv(tourney_year):
 	df = df[~df['match_num'].isnull()]
 
 	##generate ID's here
-	df['complex_ID'] = df['tourney_name'].apply(hash)
-	df['match_ID'] = (df['tourney_id'] + df['match_num'].map(str)).apply(hash)
+	df['complex_ID'] = df['tourney_name'].apply(hash1)
+	df['match_ID'] = (df['tourney_id'] + df['match_num'].map(str)).apply(hash1)
 	df['tourney_date'] = pd.to_datetime(df['tourney_date'])
 	df_max = df['match_num'].max()
 	df['match_date'] = df['tourney_date'] + (np.floor(pd.to_numeric(df['match_num'])/float(df_max) *14)).apply(datetime.timedelta)
 	#print df['match_date']
 	df['x'] = np.random.randint(1,11, size=df.shape[0])
-	df['court_ID'] = (df['tourney_id'] + df['x'].astype(str)).apply(hash)
+	df['court_ID'] = (df['tourney_id'] + df['x'].astype(str)).apply(hash1)
 	#print(df.iloc[0,0])
 	#print(df.iloc[0])
 	print(df.shape)
