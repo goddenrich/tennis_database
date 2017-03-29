@@ -130,7 +130,7 @@ def Play_In(df):
 	p = pd.DataFrame()
 	p['player_ID'] = pd.concat([df['winner_id'], df['loser_id']], axis=0, ignore_index=True)
 	p['match_ID'] = pd.concat([df['match_ID'], df['match_ID']], ignore_index=True)
-	p['winner'] = pd.concat([pd.DataFrame(np.ones((df.shape[0]))), pd.DataFrame(np.zeros((df.shape[0])))], ignore_index=True)
+	p['winner'] = pd.concat([pd.DataFrame(np.ones((df.shape[0]), dtype=bool)), pd.DataFrame(np.zeros((df.shape[0]), dtype=bool))], ignore_index=True)
 	#p['forfeited'] = pd.concat(df[df['score'].str.contains('RET')])
 	p['forfeited'] =  pd.concat([df['score'], df['score']], axis=0, ignore_index=True).apply(lambda x: True if('RET' in str(x)) else False)
 	p['score'] = pd.concat([df['score'], df['score']], axis=0, ignore_index=True)
@@ -189,7 +189,7 @@ def Spectators(df):
 	s['email'] = s['email'].apply(lambda x: fake.email())
 	s['telephone'] = np.nan
 	s['telephone'] = s['telephone'].apply(lambda x: fake.phone_number())
-	s['gender'] = random.choice(['m','f'])
+	s['gender'] = random.choice(['m','f'], size=s.shape[0])
 	s['special_assistance'] = np.random.choice([0,1], size=s.shape[0], p=[0.96,0.04])
 
 	#print s
