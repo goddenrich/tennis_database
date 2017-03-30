@@ -198,11 +198,81 @@ def login():
 
 @app.route('/player')
 def player():
+  print request.args
+
+
+  #
+  # example of a database query
+  #
+  
+  #cursor = g.conn.execute("""
+  #select p.name, p.height, p.country, age(p.dob) 
+  #from players p join play_in pi on p.player_ID = pi.player_ID join matches m on pi.match_ID = m.match_ID 
+  #where m.round_num = 'F' and p.height > 183
+  #group by p.name, p.height, p.country, age(p.dob)
+  #order by age(p.dob) DESC LIMIT 1;""")
+  #names = []
+  #for result in cursor:
+  #  names.append(result)  # can also be accessed using result[0]
+  #cursor.close()
+
+  #
+  # Flask uses Jinja templates, which is an extension to HTML where you can
+  # pass data to a template and dynamically generate HTML based on the data
+  # (you can think of it as simple PHP)
+  # documentation: https://realpython.com/blog/python/primer-on-jinja-templating/
+  #
+  # You can see an example template in templates/index.html
+  #
+  # context are the variables that are passed to the template.
+  # for example, "data" key in the context variable defined below will be 
+  # accessible as a variable in index.html:
+  #
+  #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
+  #     <div>{{data}}</div>
+  #     
+  #     # creates a <div> tag for each element in data
+  #     # will print: 
+  #     #
+  #     #   <div>grace hopper</div>
+  #     #   <div>alan turing</div>
+  #     #   <div>ada lovelace</div>
+  #     #
+  #     {% for n in data %}
+  #     <div>{{n}}</div>
+  #     {% endfor %}
+  #
+  #context = dict(data = names)
+
+
+  #
+  # render_template looks in the templates/ folder for files.
+  # for example, the below file reads template/index.html
+  #
+  #return render_template("player.html", **context)
   return render_template("player.html")
 
 
+@app.route('/', methods=['POST'])
+def player_post():
 
+  text = request.form['name']
+  print(text)
+  #print(text)
+  mystring = """select p.name, p.height, p.country, age(p.dob) 
+  from players p
+  where p.name = '%s';"""
+  cursor = g.conn.execute(mystring % text)
+  #where p.name = """ + text + """;""")
+  names = []
+  for result in cursor:
+    names.append(result)  # can also be accessed using result[0]
+  cursor.close()
 
+  context = dict(data = names)
+  #print(context)
+
+  return render_template("player_add.html", **context)
 
 
 
