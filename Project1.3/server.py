@@ -34,7 +34,7 @@ app = Flask(__name__, template_folder=tmpl_dir)
 #
 #     DATABASEURI = "postgresql://biliris:foobar@104.196.18.7/w4111"
 #
-DATABASEURI = "postgresql://user:password@104.196.18.7/w4111"
+DATABASEURI = "postgresql://rg3047:tennisrules@104.196.18.7/w4111"
 
 
 #
@@ -46,12 +46,18 @@ engine = create_engine(DATABASEURI)
 # Example of running queries in your database
 # Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
-engine.execute("""CREATE TABLE IF NOT EXISTS test (
-  id serial,
-  name text
-);""")
-engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
+#conn = engine.connect()
 
+#cursor = conn.execute("""
+#select p.name, p.height, p.country, age(p.dob)
+#from players p join play_in pi on p.player_ID = pi.player_ID join matches m on pi.match_ID = m.match_ID
+#where m.round_num = 'F' and p.height > 183
+#group by p.name, p.height, p.country, age(p.dob)
+#order by age(p.dob) DESC LIMIT 1;""")
+#engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
+
+#record = cursor.fetchone()
+#print(record)
 
 @app.before_request
 def before_request():
@@ -113,10 +119,15 @@ def index():
   #
   # example of a database query
   #
-  cursor = g.conn.execute("SELECT name FROM test")
+  cursor = g.conn.execute("""
+  select p.name, p.height, p.country, age(p.dob) 
+  from players p join play_in pi on p.player_ID = pi.player_ID join matches m on pi.match_ID = m.match_ID 
+  where m.round_num = 'F' and p.height > 183
+  group by p.name, p.height, p.country, age(p.dob)
+  order by age(p.dob) DESC LIMIT 1;""")
   names = []
   for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
+    names.append(result)  # can also be accessed using result[0]
   cursor.close()
 
   #
