@@ -173,6 +173,9 @@ def index():
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
 #
+
+
+
 @app.route('/another')
 def another():
   return render_template("another.html")
@@ -190,6 +193,26 @@ def add():
 def login():
     abort(401)
     this_is_never_executed()
+
+
+
+@app.route('/player')
+def player():
+  return render_template("player.html")
+
+
+
+
+
+
+
+@app.route('/matches')
+def matches():
+  return render_template("matches.html")
+
+
+
+
 
 
 if __name__ == "__main__":
