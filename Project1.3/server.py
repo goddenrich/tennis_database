@@ -16,6 +16,7 @@ Read about it online.
 
 import os
 from sqlalchemy import *
+#from sqlalchemy import text
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
 
@@ -255,21 +256,142 @@ def player():
 
 @app.route('/', methods=['POST'])
 def player_post():
+  context = {}
+  name = request.form['name']
+  m_won = False
 
-  text = request.form['name']
-  print(text)
+  if(request.form.get('m_won')):
+    m_won = True
+  #print("INSERT INTO users (name, age) VALUES(%s, %s")
+
   #print(text)
-  mystring = """select p.name, p.height, p.country, age(p.dob) 
+  
+  #mystring = "SELECT p.name, p.gender, p.country, p.ranking_points, p.height, p.weight, age(p.dob) from players p where p.name = '(name)' VALUES(%s) "
+  #cursor = g.conn.execute(mystring % name)
+  #cursor = g.conn.execute(mystring, '+name)
+  #where p.name = """ + text + """;""")
+  mystring = """select p.name, p.gender, p.country, p.ranking_points, p.height, p.weight, age(p.dob)
   from players p
   where p.name = '%s';"""
-  cursor = g.conn.execute(mystring % text)
-  #where p.name = """ + text + """;""")
+  cursor = g.conn.execute(mystring % name)
+
   names = []
   for result in cursor:
     names.append(result)  # can also be accessed using result[0]
   cursor.close()
 
-  context = dict(data = names)
+  mystring0 = """ select t.name, m.round_num, p_in.winner
+  from players p join play_in p_in on p.player_id = p_in.player_id
+  join matches m on m.match_id = p_in.match_id
+  join tournaments t on m.tournament_id= t.tournament_id
+  where p.name = '%s' and (p_in.winner = false or (p_in.winner = true and m.round_num = 'F'));"""
+  cursor1 = g.conn.execute(mystring0 % name)
+  #where p.name = """ + text + """;""")
+  part = []
+  for result in cursor1:
+    part.append(result)  # can also be accessed using result[0]
+  cursor1.close()
+
+  won = []
+  if(m_won):
+    mystring1 = """ select p0.name, t.name, m.round_num, Q.score 
+    from (select p2.player_id as id, p2.score as score, p1.match_id as match_id
+    from play_in p1, play_in p2, players pl
+    where p1.match_id = p2.match_id and p1.player_id != p2.player_id and p1.player_id = pl.player_id 
+    and p1.winner= true and pl.name ='%s') Q join players p0 on Q.id = p0.player_id 
+    join matches m on Q.match_id = m.match_id
+    join tournaments t on t.tournament_id = m.tournament_id;"""
+    cursor1 = g.conn.execute(mystring1 % name)
+    #where p.name = """ + text + """;""")
+    
+    for result in cursor1:
+      won.append(result)  # can also be accessed using result[0]
+    cursor1.close()
+    context['num_won'] = len(won)
+    context['won'] = won
+
+  mystring2 = """ select p0.name, t.name, m.round_num, Q.score 
+  from (select p2.player_id as id, p2.score as score, p1.match_id as match_id
+  from play_in p1, play_in p2, players pl
+  where p1.match_id = p2.match_id and p1.player_id != p2.player_id and p1.player_id = pl.player_id 
+  and p1.winner= false and pl.name ='%s') Q join players p0 on Q.id = p0.player_id 
+  join matches m on Q.match_id = m.match_id
+  join tournaments t on t.tournament_id = m.tournament_id;"""
+  cursor1 = g.conn.execute(mystring2 % name)
+  #where p.name = """ + text + """;""")
+  lost = []
+  for result in cursor1:
+    lost.append(result)  # can also be accessed using result[0]
+  cursor1.close()
+
+  mystring3 = """ select p0.name, t.name, m.round_num, Q.score 
+  from (select p2.player_id as id, p2.score as score, p1.match_id as match_id
+  from play_in p1, play_in p2, players pl
+  where p1.match_id = p2.match_id and p1.player_id != p2.player_id and p1.player_id = pl.player_id 
+  and p1.winner= false and pl.name ='%s' and p1.forfeited= true) Q join players p0 on Q.id = p0.player_id 
+  join matches m on Q.match_id = m.match_id
+  join tournaments t on t.tournament_id = m.tournament_id;"""
+  cursor1 = g.conn.execute(mystring3 % name)
+  #where p.name = """ + text + """;""")
+  forf = []
+  for result in cursor1:
+    forf.append(result)  # can also be accessed using result[0]
+  cursor1.close()
+
+
+  mystring4 = """ select (po.end_dt - po.start_dt)  as duration
+  from played_on po
+  join matches m on m.match_id = po.match_id
+  join play_in pi on m.match_id = pi.match_id
+  join players pl on pi.player_id = pl.player_id
+  where pl.name = '%s';"""
+  cursor1 = g.conn.execute(mystring4 % name)
+  #where p.name = """ + text + """;""")
+  time = []
+  for result in cursor1:
+    time.append(result[0].seconds//3600)  # can also be accessed using result[0]
+  cursor1.close()
+
+
+  mystring5 = """select c.surface, count(pi.match_id), count(CASE WHEN pi.winner THEN 1 END)
+  from played_on po
+  join courts c on c.court_id = po.court_id
+  join play_in pi on po.match_id = pi.match_id
+  join players pl on pi.player_id = pl.player_id
+  where pl.name = '%s'
+  group by c.surface;"""
+  cursor1 = g.conn.execute(mystring5 % name)
+  #where p.name = """ + text + """;""")
+  surface = []
+  for result in cursor1:
+    surface.append(result)  # can also be accessed using result[0]
+  cursor1.close()
+
+  
+  context['data'] = names[0]
+  context['name'] = names[0][0]
+  context['gender'] = names[0][1]
+  context['country'] = names[0][2]
+  context['ranking_points'] = names[0][3]
+  context['height'] = names[0][4]
+  context['weight'] = names[0][5]
+  context['age'] = names[0][6].days/364 -1 
+
+  context['num_lost'] = len(lost)
+  context['lost'] = lost
+  context['part'] = part
+  context['num_forf'] = len(forf)
+  context['forf'] = forf
+  print(surface)
+  #print(time)
+  #print([sum(time), min(time), max(time)])
+  context['time'] = [sum(time), min(time), max(time)]
+  context['surface'] = surface[0]
+  #print(context['time'])
+
+  #print(names[0][6].days)
+
+  #print(context['won'])
   #print(context)
 
   return render_template("player_add.html", **context)

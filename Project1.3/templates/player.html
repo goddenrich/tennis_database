@@ -9,18 +9,26 @@
 
 <body>
   <h1>Player Page</h1>
-  <div>{{data}}</div>
 
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
-
-
+<h4>Which properties of the player would you like to know?</h4>
 <form method="POST" action=".">
-<p>Name of player: <input type="text" name="name"> <input type="submit" value="Submit"></p>
+  <input type="checkbox" name="m_won"> Matches Won<br>
+  <input type="checkbox" name="m_lost" value="m_lost"> Matches Lost<br>
+  <input type="checkbox" name="m_for" value="m_for"> Matches Forfeited<br>
+  <input type="checkbox" name="t_won" value="t_won"> Tournaments Won<br>
+  <input type="checkbox" name="t_in" value="t_in"> Tournaments Participated In<br>
+  <input type="checkbox" name="r_reach" value="r_reach"> Furthest round reached <br>
+  <input type="checkbox" name="t_m_play" value="t_m_play"> Total Matchtime Play<br>
+  <input type="checkbox" name="l_s_play" value="l_s_play"> Longest/shortest match<br>
+  <input type="checkbox" name="surface" value="surface"> Surfaces played on/matches won by surface<br>
+  <p>Name of player: <input type="text" name="name"> <input type="submit" value="Submit"></p>
+
 </form>
+
+
+
+
+<p><a href="/">Back to the main page</a></p>
 
 </body>
 
