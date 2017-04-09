@@ -220,12 +220,8 @@ def player_post():
   context['part'] = part
   
   won = matches_won(name)
-  if(won is not None):
-    context['num_won'] = len(won)
-  else:
-    contex['num_won'] = None
+  context['num_won'] = len(won)
   context['won'] = won
-  print(context)
 
   lost = matches_lost(name)
   context['num_lost'] = len(lost)
