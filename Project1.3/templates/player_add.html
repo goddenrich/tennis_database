@@ -12,14 +12,7 @@
 
 <body>
   <h1>Player Details</h1>
-  <div>{{data}}</div>
-
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
-
+  
 <table style="width:70%">
   <tr>
     <th>Name</th>
@@ -41,15 +34,44 @@
   </tr>
 </table>
 
-<p id="won"><div>{{num_won}}</div></p>
 
-<div> <script>document.write(myFunction())</script></div>
-<button onclick="myFunction()">Try it</button>
+<h4>Tournaments Participated in and Round Number Reached: </h4>
+
+<p id="part"></p>
+<button onclick="f_part()">Show Details</button>
 
 <script>
-function myFunction(){
-   var HTML = "<h4>Total Number of matches won: <div>{{num_won}}</div> </h4> \
-  <table width=50%> \
+function f_part(){
+   var HTML = "<table width=30%> \
+  <tr> \
+    <th>Tournament </th> \
+    <th>Round Number </th> \
+  </tr> \
+  <div> \
+    {% for n in part %} \
+    <tr> \
+    {% for m in n[0:2] %} \
+    <td>{{m}}</td> \
+    {% endfor %} \
+    </tr> \
+    {% endfor %} \
+  </div> \
+</table>";
+  document.getElementById("part").innerHTML = HTML;
+}
+</script>
+
+
+
+<h4>Number of Matches Won:</h4>
+<p><div id="won">{{num_won}}</div></p>
+
+<button onclick="f_won()">Show Details</button>
+
+<script>
+function f_won(){
+   var HTML = "<p><div>{{num_won}}</div></p> \
+   <table width=50%> \
   <tr> \
     <th>Opponent </th> \
     <th>Tournament </th> \
@@ -66,7 +88,7 @@ function myFunction(){
     {% endfor %} \
   </div> \
   </table> ";
-  if(document.getElementById("won") != null){
+  if(document.getElementById("won").innerHTML != "0"){
     document.getElementById("won").innerHTML = HTML;
   }
 }
@@ -74,113 +96,120 @@ function myFunction(){
 
 
 
+<h4>Number of Matches Lost:</h4>
 
-<h4>Total Number of matches lost: <div>{{num_lost}}</div> </h4>
+<p><div id="lost">{{num_lost}}</div></p>
 
-<table style="width:50%">
-  <tr>
-    <th>Opponent </th>
-    <th>Tournament </th>
-    <th>Round Number </th>
-    <th>Score</th>
-  </tr>
-  <div>
-    {% for n in lost %}
-    <tr>
-    {% for m in n %}
-    <td><div>{{m}}</div></td>
-    {% endfor %}
-    </tr>
-    {% endfor %}
-  </div>
-</table>
-
-
-<h4>Tournaments Participated in and Round Number Reached: </h4>
-
-<table style="width:30%">
-  <tr>
-    <th>Tournament </th>
-    <th>Round Number </th>
-  </tr>
-  <div>
-    {% for n in part %}
-    <tr>
-    {% for m in n[0:2] %}
-    <td>{{m}}</td>
-    {% endfor %}
-    </tr>
-    {% endfor %}
-  </div>
-</table>
+<button onclick="f_lost()">Show Details</button>
 
 <script>
-function f(m,n){
-  var temp;
-  if(n[3] == true && m == 'F'){
-    temp = "WON";
-  }   
-  else {temp = m;}
-  return temp;
-  document.getElementById("demo").innerHTML = temp;
+function f_lost(){
+   var HTML = "<p><div>{{num_lost}}</div></p> \
+   <table width=50%> \
+  <tr> \
+    <th>Opponent </th> \
+    <th>Tournament </th> \
+    <th>Round Number </th> \
+    <th>Score</th> \
+  </tr> \
+  <div> \
+    {% for n in lost %} \
+    <tr> \
+    {% for m in n %} \
+    <td><div>{{m}}</div></td> \
+    {% endfor %} \
+    </tr> \
+    {% endfor %} \
+  </div> \
+</table> ";
+  if(document.getElementById("lost").innerHTML != "0"){
+    document.getElementById("lost").innerHTML = HTML;
+  }
 }
-
 </script>
 
 
-<h4>Total Number of matches forfeited: <div>{{num_forf}}</div> </h4>
+<h4>Number of Matches Forfeited:</h4>
+<p><div id = "forf">{{num_forf}}</div></p>
 
-<table style="width:50%">
-  <tr>
-    <th>Opponent </th>
-    <th>Tournament </th>
-    <th>Round Number </th>
-    <th>Score</th>
-  </tr>
-  <div>
-    {% for n in forf %}
-    <tr>
-    {% for m in n %}
-    <td><div>{{m}}</div></td>
-    {% endfor %}
-    </tr>
-    {% endfor %}
-  </div>
-</table>
+<button onclick="f_forf()">Show Details</button>
 
-<h4>Match times in hours:</h4>
+<script>
+function f_forf(){
+   var HTML = "<p><div>{{num_forf}}</div></p> \
+   <table width=50%> \
+  <tr> \
+    <th>Opponent </th> \
+    <th>Tournament </th> \
+    <th>Round Number </th> \
+    <th>Score</th> \
+  </tr> \
+  <div> \
+    {% for n in forf %} \
+    <tr> \
+    {% for m in n %} \
+    <td><div>{{m}}</div></td> \
+    {% endfor %} \
+    </tr> \
+    {% endfor %} \
+  </div> \
+</table> ";
+  if(document.getElementById("forf").innerHTML != "0"){
+    document.getElementById("forf").innerHTML = HTML;
+  }
+}
+</script>
 
-<table style="width:50%">
-  <tr>
-    <th>Total matchtime played </th>
-    <th>Shortest match duration</th>
-    <th>Longest match duration</th>
-  </tr>
-  <div>
-    <tr>
-    {% for n in time %}
-    <td><div>{{n}}</div></td>
-    {% endfor %}
-    </tr>
-  </div>
-</table>
+
+<h4>Match time Statistics:</h4>
+<p id = "time"></p>
+
+<button onclick="time_stat()">Show Details</button>
+
+<script>
+function time_stat(){
+   var HTML = "<table width=50%> \
+  <tr> \
+    <th>Total matchtime played </th> \
+    <th>Shortest match duration</th> \
+    <th>Longest match duration</th> \
+  </tr> \
+  <div> \
+    <tr> \
+    {% for n in time %} \
+    <td><div>{{n}}</div></td> \
+    {% endfor %} \
+    </tr> \
+  </div> \
+</table>";
+  document.getElementById("time").innerHTML = HTML;
+}
+</script>
 
 <h4>Surface statistics:</h4>
+<p id = "surface"></p>
 
-<table style="width:50%">
-  <tr>
-    <th>Surface </th>
-    <th>Total number of matches played</th>
-    <th>Number of matches won</th>
-  </tr>
-  <div>
-    <tr>
-    {% for n in surface %}
-    <td><div>{{n}}</div></td>
-    {% endfor %}
-    </tr>
-  </div>
-</table>
+<button onclick="surface_f()">Show Details</button>
+
+<script>
+function surface_f(){
+   var HTML = "<table width=50%> \
+  <tr> \
+    <th>Surface </th> \
+    <th>Total number of matches played</th> \
+    <th>Number of matches won</th> \
+  </tr> \
+  <div> \
+    <tr> \
+    {% for n in surface %} \
+    <td><div>{{n}}</div></td> \
+    {% endfor %} \
+    </tr> \
+  </div> \
+</table>";
+  document.getElementById("surface").innerHTML = HTML;
+}
+</script>
 
 <p><a href="player">Go back to the player page</a></p>
 
