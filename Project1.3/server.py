@@ -456,10 +456,10 @@ def tournament_post():
   context['city'] = names[0][4]
   context['country'] = names[0][5]
 
-  mystring = """select m.match_id, count(ti.ticket_id)
+  mystring = """select m.match_id, count(ti.ticket_id) as count_t
   from tournaments t, matches m left outer join tickets ti on ti.match_id = m.match_id
   where t.name = '%s' and t.tournament_id = m.tournament_id
-  group by m.match_id;"""
+  group by m.match_id order by count_t;"""
   cursor = g.conn.execute(mystring % t_name)
 
   ticket_numbers = []
