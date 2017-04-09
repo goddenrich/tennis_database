@@ -302,10 +302,20 @@ def tournament_details(t_name):
   return names
 
 def ticket_numbers(t_name):
-  mystring = """select m.match_id, count(ti.ticket_id) as count_t
-  from tournaments t, matches m left outer join tickets ti on ti.match_id = m.match_id
-  where t.name = '%s' and t.tournament_id = m.tournament_id
-  group by m.match_id order by count_t;"""
+  mystring = """select concat(p.player1_name, ' vs ', p.player2_name), count(ti.ticket_id) as count_t
+  from tournaments t, matches m left outer join tickets ti on ti.match_id = m.match_id,
+  (select p1.match_id as match_id, p1.player_id as player1_id, 
+  p1.name as player1_name, p2.player_id as player2_id, p2.name as player2_name 
+  from 
+  (select pi.match_id as match_id, p.player_id as player_id, p.name as name 
+  from play_in pi, players p where p.player_id = pi.player_id) p1 
+  join 
+  (select pi.match_id as match_id, p.player_id as player_id, p.name as name 
+  from play_in pi, players p where p.player_id = pi.player_id) p2 
+  on p1.match_id = p2.match_id where p1.player_id != p2.player_id) p
+
+  where t.name = '%s' and t.tournament_id = m.tournament_id and p.match_id = m.match_id
+  group by p.player1_name, p.player2_name, m.match_id order by count_t;"""
   cursor = g.conn.execute(mystring % t_name)
 
   ticket_n = []
@@ -334,7 +344,10 @@ def gender_split(t_name):
 
   gender_balance = []
   for result in cursor:
-    gender_balance.append(result)  # can also be accessed using result[0]
+    result_l = []
+    result_l.append(str(result[0]) + ": " + str(result[1]))
+    result_l.append(result[1])
+    gender_balance.append(result_l)  # can also be accessed using result[0]
   cursor.close()
   
   gender_pie = pie_graph(gender_balance)

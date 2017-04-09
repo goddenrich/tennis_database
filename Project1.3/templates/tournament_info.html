@@ -39,7 +39,7 @@
 
 <table style="width:50%">
   <tr>
-    <th>Match ID </th>
+    <th>Players </th>
     <th>Number of tickets </th>
   </tr>
   <div>
@@ -55,23 +55,7 @@
 
 {{ticket_chart.render().decode('utf-8')|safe}} 
 
-<h4>Gender balance of the tournament : </h4>
-
-<table style="width:50%">
-  <tr>
-    <th>Gender </th>
-    <th>Number of tickets </th>
-  </tr>
-  <div>
-    {% for n in gender_balance %}
-    <tr>
-    {% for m in n %}
-    <td><div>{{m}}</div></td>
-    {% endfor %}
-    </tr>
-    {% endfor %}
-  </div>
-</table>
+<h4>Number of tickets sold by gender: </h4>
 
 {{gender_chart.render().decode('utf-8')|safe}} 
 
