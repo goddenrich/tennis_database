@@ -10,7 +10,7 @@
   </style>
 
 
-<body>
+<body onload='won_show()'>
   <h1>Player Details</h1>
   
 <table style="width:70%">
@@ -61,7 +61,11 @@ function f_part(){
 }
 </script>
 
-
+<script type="text/javascript">
+    var won_show = function(){
+       return "hello world";
+    }
+</script>
 
 <h4>Number of Matches Won:</h4>
 <p><div id="won">{{num_won}}</div></p>
