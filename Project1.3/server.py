@@ -25,42 +25,10 @@ import pygal
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
-
-#
-# The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
-#
-# XXX: The URI should be in the format of: 
-#
-#     postgresql://USER:PASSWORD@104.196.18.7/w4111
-#
-# For example, if you had username biliris and password foobar, then the following line would be:
-#
-#     DATABASEURI = "postgresql://biliris:foobar@104.196.18.7/w4111"
-#
 DATABASEURI = "postgresql://rg3047:tennisrules@104.196.18.7/w4111"
 
-
-#
-# This line creates a database engine that knows how to connect to the URI above.
-#
 engine = create_engine(DATABASEURI)
 
-#
-# Example of running queries in your database
-# Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
-#
-#conn = engine.connect()
-
-#cursor = conn.execute("""
-#select p.name, p.height, p.country, age(p.dob)
-#from players p join play_in pi on p.player_ID = pi.player_ID join matches m on pi.match_ID = m.match_ID
-#where m.round_num = 'F' and p.height > 183
-#group by p.name, p.height, p.country, age(p.dob)
-#order by age(p.dob) DESC LIMIT 1;""")
-#engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
-
-#record = cursor.fetchone()
-#print(record)
 
 @app.before_request
 def before_request():
@@ -90,38 +58,9 @@ def teardown_request(exception):
     pass
 
 
-#
-# @app.route is a decorator around index() that means:
-#   run index() whenever the user tries to access the "/" path using a GET request
-#
-# If you wanted the user to go to, for example, localhost:8111/foobar/ with POST or GET then you could use:
-#
-#       @app.route("/foobar/", methods=["POST", "GET"])
-#
-# PROTIP: (the trailing / in the path is important)
-# 
-# see for routing: http://flask.pocoo.org/docs/0.10/quickstart/#routing
-# see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
-#
 @app.route('/')
 def index():
-  """
-  request is a special object that Flask provides to access web request information:
-
-  request.method:   "GET" or "POST"
-  request.form:     if the browser submitted a form, this contains the data in the form
-  request.args:     dictionary of URL arguments, e.g., {a:1, b:2} for http://localhost?a=1&b=2
-
-  See its API: http://flask.pocoo.org/docs/0.10/api/#incoming-request-data
-  """
-
-  # DEBUG: this is debugging code to see what request looks like
   print request.args
-
-
-  #
-  # example of a database query
-  #
   cursor = g.conn.execute("""
   select p.name, p.height, p.country, age(p.dob) 
   from players p join play_in pi on p.player_ID = pi.player_ID join matches m on pi.match_ID = m.match_ID 
@@ -132,127 +71,12 @@ def index():
   for result in cursor:
     names.append(result)  # can also be accessed using result[0]
   cursor.close()
-
-  #
-  # Flask uses Jinja templates, which is an extension to HTML where you can
-  # pass data to a template and dynamically generate HTML based on the data
-  # (you can think of it as simple PHP)
-  # documentation: https://realpython.com/blog/python/primer-on-jinja-templating/
-  #
-  # You can see an example template in templates/index.html
-  #
-  # context are the variables that are passed to the template.
-  # for example, "data" key in the context variable defined below will be 
-  # accessible as a variable in index.html:
-  #
-  #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-  #     <div>{{data}}</div>
-  #     
-  #     # creates a <div> tag for each element in data
-  #     # will print: 
-  #     #
-  #     #   <div>grace hopper</div>
-  #     #   <div>alan turing</div>
-  #     #   <div>ada lovelace</div>
-  #     #
-  #     {% for n in data %}
-  #     <div>{{n}}</div>
-  #     {% endfor %}
-  #
   context = dict(data = names)
-
-
-  #
-  # render_template looks in the templates/ folder for files.
-  # for example, the below file reads template/index.html
-  #
   return render_template("index.html", **context)
-
-#
-# This is an example of a different path.  You can see it at:
-# 
-#     localhost:8111/another
-#
-# Notice that the function name is another() rather than index()
-# The functions for each app.route need to have different names
-#
-
-
-
-@app.route('/another')
-def another():
-  return render_template("another.html")
-
-
-# Example of adding new data to the database
-@app.route('/add', methods=['POST'])
-def add():
-  name = request.form['name']
-  g.conn.execute('INSERT INTO test VALUES (NULL, ?)', name)
-  return redirect('/')
-
-
-@app.route('/login')
-def login():
-    abort(401)
-    this_is_never_executed()
-
-
 
 @app.route('/player')
 def player():
   print request.args
-
-
-  #
-  # example of a database query
-  #
-  
-  #cursor = g.conn.execute("""
-  #select p.name, p.height, p.country, age(p.dob) 
-  #from players p join play_in pi on p.player_ID = pi.player_ID join matches m on pi.match_ID = m.match_ID 
-  #where m.round_num = 'F' and p.height > 183
-  #group by p.name, p.height, p.country, age(p.dob)
-  #order by age(p.dob) DESC LIMIT 1;""")
-  #names = []
-  #for result in cursor:
-  #  names.append(result)  # can also be accessed using result[0]
-  #cursor.close()
-
-  #
-  # Flask uses Jinja templates, which is an extension to HTML where you can
-  # pass data to a template and dynamically generate HTML based on the data
-  # (you can think of it as simple PHP)
-  # documentation: https://realpython.com/blog/python/primer-on-jinja-templating/
-  #
-  # You can see an example template in templates/index.html
-  #
-  # context are the variables that are passed to the template.
-  # for example, "data" key in the context variable defined below will be 
-  # accessible as a variable in index.html:
-  #
-  #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-  #     <div>{{data}}</div>
-  #     
-  #     # creates a <div> tag for each element in data
-  #     # will print: 
-  #     #
-  #     #   <div>grace hopper</div>
-  #     #   <div>alan turing</div>
-  #     #   <div>ada lovelace</div>
-  #     #
-  #     {% for n in data %}
-  #     <div>{{n}}</div>
-  #     {% endfor %}
-  #
-  #context = dict(data = names)
-
-
-  #
-  # render_template looks in the templates/ folder for files.
-  # for example, the below file reads template/index.html
-  #
-  #return render_template("player.html", **context)
   return render_template("player.html")
 
 def check(var):
@@ -465,11 +289,7 @@ def tournament():
   print request.args
   return render_template("tournament.html")
 
-@app.route('/tournament_info', methods=['POST'])
-def tournament_post():
-  context = {}
-  t_name = str(request.form['tournament'])
-  
+def tournament_details(t_name):
   mystring = """select t.name, t.start_date, t.end_date, c.complex_name, c.city, c.country
   from tournaments t join complex c on c.complex_id = t.complex_id
   where t.name = '%s';"""
@@ -479,6 +299,60 @@ def tournament_post():
   for result in cursor:
     names.append(result)  # can also be accessed using result[0]
   cursor.close()
+  return names
+
+def ticket_numbers(t_name):
+  mystring = """select m.match_id, count(ti.ticket_id) as count_t
+  from tournaments t, matches m left outer join tickets ti on ti.match_id = m.match_id
+  where t.name = '%s' and t.tournament_id = m.tournament_id
+  group by m.match_id order by count_t;"""
+  cursor = g.conn.execute(mystring % t_name)
+
+  ticket_n = []
+  for result in cursor:
+    ticket_n.append(result)  # can also be accessed using result[0]
+  cursor.close()
+
+  ticket_graph = bar_graph(ticket_n)
+
+  return ticket_n, ticket_graph
+
+def bar_graph(data):
+  graph=pygal.Bar()
+  for i, item in enumerate(data):
+    graph.add(str(item[0]),item[1])
+  return graph
+
+def gender_split(t_name):
+  mystring = """select s.gender, count(s.spectator_id)
+  from tournaments t, matches m left outer join tickets ti on 
+  m.match_id = ti.match_id, spectators s
+  where t.name = '%s' and t.tournament_id = m.tournament_id  
+  and s.spectator_id = ti.spectator_id
+  group by s.gender;"""
+  cursor = g.conn.execute(mystring % t_name)
+
+  gender_balance = []
+  for result in cursor:
+    gender_balance.append(result)  # can also be accessed using result[0]
+  cursor.close()
+  
+  gender_pie = pie_graph(gender_balance)
+
+  return gender_balance, gender_pie
+
+def pie_graph(data):
+  graph=pygal.Pie()
+  for i, item in enumerate(data):
+    graph.add(str(item[0]),item[1])
+  return graph
+
+@app.route('/tournament_info', methods=['POST'])
+def tournament_post():
+  context = {}
+  t_name=str(request.form['tournament'])
+
+  names=tournament_details(t_name)
 
   context['data'] = names[0]
   context['name'] = names[0][0]
@@ -488,42 +362,14 @@ def tournament_post():
   context['city'] = names[0][4]
   context['country'] = names[0][5]
 
-  mystring = """select m.match_id, count(ti.ticket_id) as count_t
-  from tournaments t, matches m left outer join tickets ti on ti.match_id = m.match_id
-  where t.name = '%s' and t.tournament_id = m.tournament_id
-  group by m.match_id order by count_t;"""
-  cursor = g.conn.execute(mystring % t_name)
+  ticket_n, ticket_graph= ticket_numbers(t_name)
 
-  ticket_numbers = []
-  for result in cursor:
-    ticket_numbers.append(result)  # can also be accessed using result[0]
-  cursor.close()
+  context['ticket_numbers'] = ticket_n
 
-  context['ticket_numbers'] = ticket_numbers
-
-  ticket_graph=pygal.Bar()
-  print ticket_numbers
-  for i, item in enumerate(ticket_numbers):
-    print item
-    ticket_graph.add(str(item[0]), item[1])
-
-  mystring = """select s.gender, count(s.spectator_id)
-  from tournaments t, matches m left outer join tickets ti on m.match_id = ti.match_id, spectators s
-  where t.name = '%s' and t.tournament_id = m.tournament_id  and s.spectator_id = ti.spectator_id
-  group by s.gender;"""
-  cursor = g.conn.execute(mystring % t_name)
-
-  gender_balance = []
-  for result in cursor:
-    gender_balance.append(result)  # can also be accessed using result[0]
-  cursor.close()
+  gender_balance, gender_pie = gender_split(t_name)
 
   context['gender_balance'] = gender_balance
  
-  gender_pie=pygal.Pie()
-  for i, item in enumerate(gender_balance):
-    gender_pie.add(item[0], item[1])
-
   return render_template("tournament_info.html", gender_chart=gender_pie, ticket_chart=ticket_graph, **context)
 
 
