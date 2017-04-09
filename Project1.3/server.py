@@ -60,19 +60,7 @@ def teardown_request(exception):
 
 @app.route('/')
 def index():
-  print request.args
-  cursor = g.conn.execute("""
-  select p.name, p.height, p.country, age(p.dob) 
-  from players p join play_in pi on p.player_ID = pi.player_ID join matches m on pi.match_ID = m.match_ID 
-  where m.round_num = 'F' and p.height > 183
-  group by p.name, p.height, p.country, age(p.dob)
-  order by age(p.dob) DESC LIMIT 1;""")
-  names = []
-  for result in cursor:
-    names.append(result)  # can also be accessed using result[0]
-  cursor.close()
-  context = dict(data = names)
-  return render_template("index.html", **context)
+  return render_template("index.html")
 
 @app.route('/player')
 def player():
@@ -88,8 +76,8 @@ def check(var):
 def player_name(name):
   mystring = """select p.name, p.gender, p.country, p.ranking_points, p.height, p.weight, age(p.dob)
   from players p
-  where p.name = '%s';"""
-  cursor = g.conn.execute(mystring % name)
+  where p.name = %s;"""
+  cursor = g.conn.execute(mystring, (name,))
 
   names = []
   for result in cursor:
@@ -107,10 +95,10 @@ def matches_won(name):
     from (select p2.player_id as id, p2.score as score, p1.match_id as match_id
     from play_in p1, play_in p2, players pl
     where p1.match_id = p2.match_id and p1.player_id != p2.player_id and p1.player_id = pl.player_id 
-    and p1.winner= true and pl.name ='%s') Q join players p0 on Q.id = p0.player_id 
+    and p1.winner= true and pl.name =%s) Q join players p0 on Q.id = p0.player_id 
     join matches m on Q.match_id = m.match_id
     join tournaments t on t.tournament_id = m.tournament_id;"""
-    cursor1 = g.conn.execute(mystring1 % name)
+    cursor1 = g.conn.execute(mystring1, (name,))
     #where p.name = """ + text + """;""")
     
     for result in cursor1:
@@ -126,10 +114,10 @@ def matches_lost(name):
     from (select p2.player_id as id, p2.score as score, p1.match_id as match_id
     from play_in p1, play_in p2, players pl
     where p1.match_id = p2.match_id and p1.player_id != p2.player_id and p1.player_id = pl.player_id 
-    and p1.winner= false and pl.name ='%s') Q join players p0 on Q.id = p0.player_id 
+    and p1.winner= false and pl.name =%s) Q join players p0 on Q.id = p0.player_id 
     join matches m on Q.match_id = m.match_id
     join tournaments t on t.tournament_id = m.tournament_id;"""
-    cursor1 = g.conn.execute(mystring2 % name)
+    cursor1 = g.conn.execute(mystring2, (name,))
     #where p.name = """ + text + """;""")
     for result in cursor1:
       lost.append(result)  # can also be accessed using result[0]
@@ -144,10 +132,10 @@ def matches_forf(name):
     from (select p2.player_id as id, p2.score as score, p1.match_id as match_id
     from play_in p1, play_in p2, players pl
     where p1.match_id = p2.match_id and p1.player_id != p2.player_id and p1.player_id = pl.player_id 
-    and p1.winner= false and pl.name ='%s' and p1.forfeited= true) Q join players p0 on Q.id = p0.player_id 
+    and p1.winner= false and pl.name =%s and p1.forfeited= true) Q join players p0 on Q.id = p0.player_id 
     join matches m on Q.match_id = m.match_id
     join tournaments t on t.tournament_id = m.tournament_id;"""
-    cursor1 = g.conn.execute(mystring3 % name)
+    cursor1 = g.conn.execute(mystring3, (name,))
     #where p.name = """ + text + """;""")
     
     for result in cursor1:
@@ -164,8 +152,8 @@ def time_played(name):
     join matches m on m.match_id = po.match_id
     join play_in pi on m.match_id = pi.match_id
     join players pl on pi.player_id = pl.player_id
-    where pl.name = '%s';"""
-    cursor1 = g.conn.execute(mystring4 % name)
+    where pl.name = %s;"""
+    cursor1 = g.conn.execute(mystring4,(name,))
     #where p.name = """ + text + """;""")
     for result in cursor1:
       time.append(result[0].seconds//3600)  # can also be accessed using result[0]
@@ -182,9 +170,9 @@ def surface_played(name):
     join courts c on c.court_id = po.court_id
     join play_in pi on po.match_id = pi.match_id
     join players pl on pi.player_id = pl.player_id
-    where pl.name = '%s'
+    where pl.name = %s
     group by c.surface;"""
-    cursor1 = g.conn.execute(mystring5 % name)
+    cursor1 = g.conn.execute(mystring5, (name,))
     #where p.name = """ + text + """;""")
     for result in cursor1:
       surface_p.append(result)  # can also be accessed using result[0]
@@ -200,8 +188,8 @@ def participate(name):
     from players p join play_in p_in on p.player_id = p_in.player_id
     join matches m on m.match_id = p_in.match_id
     join tournaments t on m.tournament_id= t.tournament_id
-    where p.name = '%s' and (p_in.winner = false or (p_in.winner = true and m.round_num = 'F'));"""
-    cursor1 = g.conn.execute(mystring0 % name)
+    where p.name = %s and (p_in.winner = false or (p_in.winner = true and m.round_num = 'F'));"""
+    cursor1 = g.conn.execute(mystring0, (name,))
     #where p.name = """ + text + """;""")
     for result in cursor1:
       part.append(result)  # can also be accessed using result[0]
@@ -212,9 +200,12 @@ def participate(name):
 @app.route('/', methods=['POST'])
 def player_post():
   context = {}
-  name = request.form['name']
   
+  name = request.form['name']
+
   names = player_name(name)
+  if not names:
+    return render_template("error.html")
 
   part = participate(name)
   context['part'] = part
@@ -236,7 +227,6 @@ def player_post():
 
   surface = surface_played(name)
   context['surface'] = surface[0]
-  
   context['data'] = names[0]
   context['name'] = names[0][0]
   context['gender'] = names[0][1]
@@ -276,8 +266,12 @@ def spectator_insert():
   values['complex_name']= str(request.form['complex_name'])
   values['city'] = str(request.form['city'])
   values['country'] = str(request.form['country'])
-  query="""INSERT INTO complex(complex_id, complex_name, city, country) VALUES (%d, '%s', '%s', '%s');"""
-  g.conn.execute(query % (values['complex_id'], values['complex_name'], values['city'], values['country']))
+  query="""INSERT INTO complex(complex_id, complex_name, city, country) VALUES (%s, %s, %s, %s);"""
+  try:
+    g.conn.execute(query, (values['complex_id'], values['complex_name'], values['city'], values['country']))
+  except:
+    return render_template("error.html")
+  
   return redirect('/complex_success')
 
 @app.route('/tournament')
@@ -288,11 +282,11 @@ def tournament():
 def tournament_details(t_name):
   mystring = """select t.name, t.start_date, t.end_date, c.complex_name, c.city, c.country
   from tournaments t join complex c on c.complex_id = t.complex_id
-  where t.name = '%s';"""
-  cursor = g.conn.execute(mystring % t_name)
-
+  where t.name = %s;"""
+  cursor = g.conn.execute(mystring , (t_name,))
   names = []
   for result in cursor:
+    print result
     names.append(result)  # can also be accessed using result[0]
   cursor.close()
   return names
@@ -310,9 +304,9 @@ def ticket_numbers(t_name):
   from play_in pi, players p where p.player_id = pi.player_id) p2 
   on p1.match_id = p2.match_id where p1.player_id != p2.player_id) p
 
-  where t.name = '%s' and t.tournament_id = m.tournament_id and p.match_id = m.match_id
+  where t.name = %s and t.tournament_id = m.tournament_id and p.match_id = m.match_id
   group by p.player1_name, p.player2_name, m.match_id order by count_t;"""
-  cursor = g.conn.execute(mystring % t_name)
+  cursor = g.conn.execute(mystring, (t_name,))
 
   ticket_n = []
   for result in cursor:
@@ -333,10 +327,10 @@ def gender_split(t_name):
   mystring = """select s.gender, count(s.spectator_id)
   from tournaments t, matches m left outer join tickets ti on 
   m.match_id = ti.match_id, spectators s
-  where t.name = '%s' and t.tournament_id = m.tournament_id  
+  where t.name = %s and t.tournament_id = m.tournament_id  
   and s.spectator_id = ti.spectator_id
   group by s.gender;"""
-  cursor = g.conn.execute(mystring % t_name)
+  cursor = g.conn.execute(mystring, (t_name,))
 
   gender_balance = []
   for result in cursor:
@@ -360,8 +354,9 @@ def pie_graph(data):
 def tournament_post():
   context = {}
   t_name=str(request.form['tournament'])
-
   names=tournament_details(t_name)
+  if not names:
+    return render_template("error.html")
 
   context['data'] = names[0]
   context['name'] = names[0][0]
@@ -370,9 +365,9 @@ def tournament_post():
   context['complex_name'] = names[0][3]
   context['city'] = names[0][4]
   context['country'] = names[0][5]
-
+  
   ticket_n, ticket_graph= ticket_numbers(t_name)
-
+  
   context['ticket_numbers'] = ticket_n
 
   gender_balance, gender_pie = gender_split(t_name)
@@ -380,6 +375,9 @@ def tournament_post():
   context['gender_balance'] = gender_balance
  
   return render_template("tournament_info.html", gender_chart=gender_pie, ticket_chart=ticket_graph, **context)
+
+def check_exists(table, col, search):
+  query = """select * from '%s' where '%s' = '%s'"""
 
 
 if __name__ == "__main__":
