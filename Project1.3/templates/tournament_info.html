@@ -1,0 +1,83 @@
+<html>
+  <style>
+    table, th, td {
+    border: 1px solid black;
+    }
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <h1>Tournament Details</h1>
+
+
+<p><a href="tournament">Go back to the tournament page</a></p>
+
+<table style="width:70%">
+  <tr>
+    <th>Name</th>
+    <th>Starts on</th>
+    <th>Ends on</th>
+    <th>Complex name</th>
+    <th>City</th>
+    <th>Country</th>  
+  </tr>
+  <tr>
+      <td><div>{{name}}</div></td>
+      <td><div>{{start_date}}</div></td>
+      <td><div>{{end_date}}</div></td>
+      <td><div>{{complex_name}}</div></td>
+      <td><div>{{city}}</div></td>
+      <td><div>{{country}}</div></td>
+  </tr>
+</table>
+
+<h4>Number of spectators per match: </h4>
+
+<table style="width:50%">
+  <tr>
+    <th>Match ID </th>
+    <th>Number of tickets </th>
+  </tr>
+  <div>
+    {% for n in ticket_numbers %}
+    <tr>
+    {% for m in n %}
+    <td><div>{{m}}</div></td>
+    {% endfor %}
+    </tr>
+    {% endfor %}
+  </div>
+</table>
+
+{{ticket_chart.render().decode('utf-8')|safe}} 
+
+<h4>Gender balance of the tournament : </h4>
+
+<table style="width:50%">
+  <tr>
+    <th>Gender </th>
+    <th>Number of tickets </th>
+  </tr>
+  <div>
+    {% for n in gender_balance %}
+    <tr>
+    {% for m in n %}
+    <td><div>{{m}}</div></td>
+    {% endfor %}
+    </tr>
+    {% endfor %}
+  </div>
+</table>
+
+{{gender_chart.render().decode('utf-8')|safe}} 
+
+<p><a href="/">Go back to the main page</a></p>
+
+</body>
+
+
+</html>

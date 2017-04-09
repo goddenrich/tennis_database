@@ -19,6 +19,8 @@ from sqlalchemy import *
 #from sqlalchemy import text
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
+import pygal
+
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -403,8 +405,94 @@ def matches():
   return render_template("matches.html")
 
 
+@app.route('/complex')
+def spectator():
+  print request.args
+  return render_template("complex.html")
 
 
+@app.route('/complex_success')
+def spectator_add():
+  print request.args
+  return render_template("complex_success.html")
+
+@app.route('/complex_insert', methods=['POST'])
+def spectator_insert():
+  print request.args
+  values={}
+  values['complex_id']=int(request.form['complex_id'])
+  values['complex_name']= str(request.form['complex_name'])
+  values['city'] = str(request.form['city'])
+  values['country'] = str(request.form['country'])
+  query="""INSERT INTO complex(complex_id, complex_name, city, country) VALUES (%d, '%s', '%s', '%s');"""
+  g.conn.execute(query % (values['complex_id'], values['complex_name'], values['city'], values['country']))
+  return redirect('/complex_success')
+
+@app.route('/tournament')
+def tournament():
+  print request.args
+  return render_template("tournament.html")
+
+@app.route('/tournament_info', methods=['POST'])
+def tournament_post():
+  context = {}
+  t_name = str(request.form['tournament'])
+  
+  mystring = """select t.name, t.start_date, t.end_date, c.complex_name, c.city, c.country
+  from tournaments t join complex c on c.complex_id = t.complex_id
+  where t.name = '%s';"""
+  cursor = g.conn.execute(mystring % t_name)
+
+  names = []
+  for result in cursor:
+    names.append(result)  # can also be accessed using result[0]
+  cursor.close()
+
+  context['data'] = names[0]
+  context['name'] = names[0][0]
+  context['start_date'] = names[0][1]
+  context['end_date'] = names[0][2]
+  context['complex_name'] = names[0][3]
+  context['city'] = names[0][4]
+  context['country'] = names[0][5]
+
+  mystring = """select m.match_id, count(ti.ticket_id)
+  from tournaments t, matches m left outer join tickets ti on ti.match_id = m.match_id
+  where t.name = '%s' and t.tournament_id = m.tournament_id
+  group by m.match_id;"""
+  cursor = g.conn.execute(mystring % t_name)
+
+  ticket_numbers = []
+  for result in cursor:
+    ticket_numbers.append(result)  # can also be accessed using result[0]
+  cursor.close()
+
+  context['ticket_numbers'] = ticket_numbers
+
+  ticket_graph=pygal.Bar()
+  print ticket_numbers
+  for i, item in enumerate(ticket_numbers):
+    print item
+    ticket_graph.add(str(item[0]), item[1])
+
+  mystring = """select s.gender, count(s.spectator_id)
+  from tournaments t, matches m left outer join tickets ti on m.match_id = ti.match_id, spectators s
+  where t.name = '%s' and t.tournament_id = m.tournament_id  and s.spectator_id = ti.spectator_id
+  group by s.gender;"""
+  cursor = g.conn.execute(mystring % t_name)
+
+  gender_balance = []
+  for result in cursor:
+    gender_balance.append(result)  # can also be accessed using result[0]
+  cursor.close()
+
+  context['gender_balance'] = gender_balance
+ 
+  gender_pie=pygal.Pie()
+  for i, item in enumerate(gender_balance):
+    gender_pie.add(item[0], item[1])
+
+  return render_template("tournament_info.html", gender_chart=gender_pie, ticket_chart=ticket_graph, **context)
 
 
 if __name__ == "__main__":
