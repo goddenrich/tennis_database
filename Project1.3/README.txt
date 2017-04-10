@@ -24,4 +24,7 @@ On top of all our proposed applications, we have enabled the user to add in data
      b. 104.155.226.83:8111/players.html
         This page reports statistics on a certain player. The user inputs the player name for which they would like to know information about. 
 If this name is not found, an error page is shown and the user is prompted to go back and input valid information. The player details page is interesting as it combines information from almost all tables, through use of complicated nested queries and joins to show the information. Although the information is simply displayed, a lot of sql queries are sitting on the backend.
-Furthermore, from a web user interface, javascript functions were utilised to show the data on the click of reveal buttons. 
+Furthermore, from a web user interface, javascript functions were utilised to show the data on the click of reveal buttons.
+
+
+Some HTML/javascript snippets of code may have directly been taken from "https://www.w3schools.com/" HTML tutorials 
