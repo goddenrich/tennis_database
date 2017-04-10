@@ -295,14 +295,25 @@ def player_post():
 
   surface = surface_played(name)
   context['surface'] = surface[0]
-  context['data'] = names[0]
-  context['name'] = names[0][0]
-  context['gender'] = names[0][1]
-  context['country'] = names[0][2]
-  context['ranking_points'] = names[0][3]
-  context['height'] = names[0][4]
-  context['weight'] = names[0][5]
-  context['age'] = names[0][6].days/364 -1 
+  
+
+  
+  #context['name'] = names[0][0]
+  #context['gender'] = names[0][1]
+  #context['country'] = names[0][2]
+  #context['ranking_points'] = names[0][3]
+  #context['height'] = names[0][4]
+  #context['weight'] = names[0][5]
+  names2 =[]
+  for x in names:
+    y = (x[0], x[1], x[2], x[3], x[4], x[5], x[6].days/364 -1)
+    names2.append(y)
+    #print(x[6].days/364 -1)
+   # x[6] = x[6].days/364 -1
+
+  context['data'] = names2
+  #print context['data']
+  #context['age'] = names[0][6].days/364 -1 
 
   #print(context)
 
@@ -359,7 +370,7 @@ def tournament_details(t_name):
   cursor = g.conn.execute(mystring , (t_name,))
   names = []
   for result in cursor:
-    print result
+    #print result
     names.append(result)  # can also be accessed using result[0]
   cursor.close()
   return names
@@ -431,13 +442,7 @@ def tournament_post():
   if not names:
     return render_template("error.html")
 
-  context['data'] = names[0]
-  context['name'] = names[0][0]
-  context['start_date'] = names[0][1]
-  context['end_date'] = names[0][2]
-  context['complex_name'] = names[0][3]
-  context['city'] = names[0][4]
-  context['country'] = names[0][5]
+  context['data'] = names
   
   ticket_n, ticket_graph= ticket_numbers(t_name)
   
@@ -448,9 +453,6 @@ def tournament_post():
   context['gender_balance'] = gender_balance
  
   return render_template("tournament_info.html", gender_chart=gender_pie, ticket_chart=ticket_graph, **context)
-
-def check_exists(table, col, search):
-  query = """select * from '%s' where '%s' = '%s'"""
 
 
 if __name__ == "__main__":

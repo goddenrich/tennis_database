@@ -21,15 +21,13 @@
     <th>Weight</th>  
     <th>Age</th>
   </tr>
+  {% for n in data %}
   <tr>
-      <td><div>{{name}}</div></td>
-      <td><div>{{gender}}</div></td>
-      <td><div>{{country}}</div></td>
-      <td><div>{{ranking_points}}</div></td>
-      <td><div>{{height}}</div></td>
-      <td><div>{{weight}}</div></td>
-      <td><div>{{age}}</div></td>
+      {% for m in n %}
+      <td><div>{{m}}</div></td>
+      {% endfor %}
   </tr>
+  {% endfor %}
 </table>
 
 

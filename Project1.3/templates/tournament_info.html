@@ -16,6 +16,7 @@
 
 <p><a href="tournament">Go back to the tournament page</a></p>
 
+
 <table style="width:70%">
   <tr>
     <th>Name</th>
@@ -23,17 +24,17 @@
     <th>Ends on</th>
     <th>Complex name</th>
     <th>City</th>
-    <th>Country</th>  
+    <th>Country</th> 
   </tr>
+  {% for n in data %}
   <tr>
-      <td><div>{{name}}</div></td>
-      <td><div>{{start_date}}</div></td>
-      <td><div>{{end_date}}</div></td>
-      <td><div>{{complex_name}}</div></td>
-      <td><div>{{city}}</div></td>
-      <td><div>{{country}}</div></td>
+      {% for m in n %}
+      <td><div>{{m}}</div></td>
+      {% endfor %}
   </tr>
+  {% endfor %}
 </table>
+
 
 <h4>Number of spectators per match: </h4>
 
