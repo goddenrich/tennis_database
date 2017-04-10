@@ -262,7 +262,12 @@ def spectator_add():
 def spectator_insert():
   print request.args
   values={}
-  values['complex_id']=int(request.form['complex_id'])
+  query="""SELECT max(complex_id) from complex;"""
+  max_id=g.conn.execute(query)
+  for result in max_id:
+    next_id = int(result[0])+1
+  print next_id
+  values['complex_id']= next_id
   values['complex_name']= str(request.form['complex_name'])
   values['city'] = str(request.form['city'])
   values['country'] = str(request.form['country'])
@@ -286,7 +291,6 @@ def tournament_details(t_name):
   cursor = g.conn.execute(mystring , (t_name,))
   names = []
   for result in cursor:
-    print result
     names.append(result)  # can also be accessed using result[0]
   cursor.close()
   return names
