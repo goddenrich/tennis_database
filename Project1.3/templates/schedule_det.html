@@ -1,0 +1,56 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+<h1>Detailed Schedule</h1>
+
+<div>
+{% for n in total %}
+<h4>Court Number: {{n[0][1]}}</h4>
+<table width=50% border="1">
+  <tr>
+    <th>Surface </th> 
+    <th>Spectator Capacity</th>
+    <th>Indoor </th> 
+    <th>HawkEye available </th>
+  </tr> 
+  <tr>
+    <td>{{n[0][2]}}</td> 
+    <td>{{n[0][3]}}</td>
+    <td>{{n[0][4]}}</td>
+    <td>{{n[0][4]}}</td>  
+    </tr> 
+</table>
+
+<h6>Match Details</h6>
+
+<table width=80% border="1"> 
+  <tr> 
+    <th>Start Date/Time</th> 
+    <th>Round Number </th>
+    <th>Player 1 </th> 
+    <th>Player 2 </th>  
+  </tr> 
+    {% for m in n[1] %} 
+    <tr> 
+    {% for p in m %} 
+    <td>{{p}}</td> 
+    {% endfor %} 
+    </tr> 
+    {% endfor %} 
+</table>
+{% endfor %}
+</div>
+
+<p><a href="schedule">Go back to the schedule page</a></p>
+
+</body>
+
+
+</html>

@@ -1,0 +1,38 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <h1>Schedule Page</h1>
+
+<h4>Which tournament's Schedule would you like to know?</h4>
+
+<form class="form-inline" method="POST" action=".">
+  <div class="form-group">
+    <div class="input-group">
+        <span class="input-group-addon">Please select</span>
+            <select name="comp_select" class="selectpicker form-control">
+              {% for o in data %}
+              <option value="{{o}}">{{o}}</option>
+              {% endfor %}
+            </select>
+    </div>
+    <button type="submit" class="btn btn-default">Go</button>
+  </div>
+</form>
+
+
+
+<p><a href="/">Back to the main page</a></p>
+
+</body>
+
+
+</html>
+
+

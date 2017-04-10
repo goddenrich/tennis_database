@@ -67,6 +67,69 @@ def player():
   print request.args
   return render_template("player.html")
 
+@app.route('/schedule')
+def schedule():
+  print request.args
+
+  mystring = """select t.name from tournaments t;"""
+  cursor = g.conn.execute(mystring)
+
+  data = []
+  for result in cursor:
+    data.append(result[0])
+  cursor.close
+
+  context = {}
+  context['data'] = data
+  #print(context)
+  return render_template("schedule.html", **context)
+  #return render_template("schedule.html")
+
+@app.route('/', methods=['GET', 'POST'])
+def schedule_post():
+  print request.args
+  name = request.form.get('comp_select')
+  print(name)
+
+  mystring = """select c.court_ID, c.court_name, c.surface, c.spectator_capacity, c.indoor, c.hawkeye
+  from courts c join tournaments t on t.complex_ID = c.complex_ID
+  where t.name = %s;"""
+
+  cursor = g.conn.execute(mystring, (name,))
+
+  data = []
+  for result in cursor:
+    data.append(result)
+  cursor.close
+
+  print(data)
+
+  ###what if previous x returns nothing???
+  context = {}
+  total = []
+  for x in data:
+    #print(x[0])
+    mys = """select po.start_dt, m.round_num, pi1.name, pi2.name
+    from played_on po, matches m, (select pi.match_id as match_id, pi.winner as winner, pl.name as name from play_in pi join players pl on pi.player_id = pl.player_id) pi1,
+    (select pi.match_id as match_id, pi.winner as winner, pl.name as name from play_in pi join players pl on pi.player_id = pl.player_id) pi2
+    where m.match_id = po.match_id and pi1.match_id = m.match_id and pi1.winner = true
+    and pi2.match_id = m.match_id and pi2.winner = false
+    and po.court_id = %s;"""
+    cursor = g.conn.execute(mys, (x[0],))
+    tmp = []
+    for result in cursor:
+      tmp.append(result)
+    cursor.close
+    total.append((x,tmp))
+  #print(context)
+  context['total'] = total
+  #print(total)
+  return render_template("schedule_det.html", **context)
+
+
+
+
+
 def check(var):
   if(request.form.get(var)):
     return True
@@ -87,8 +150,8 @@ def player_name(name):
   return names
 
 def matches_won(name):
-  m_won = check('m_won')
-  won = None
+  #m_won = check('m_won')
+  m_won = True
   if(m_won):
     won = []
     mystring1 = """ select p0.name, t.name, m.round_num, Q.score 
@@ -107,7 +170,8 @@ def matches_won(name):
   return won
 
 def matches_lost(name):
-  m_lost = check('m_lost')
+  #m_lost = check('m_lost')
+  m_lost = True
   lost = []
   if(m_lost):
     mystring2 = """ select p0.name, t.name, m.round_num, Q.score 
@@ -125,7 +189,8 @@ def matches_lost(name):
   return lost
 
 def matches_forf(name):
-  m_for = check('m_for')
+  #m_for = check('m_for')
+  m_for = True
   forf = []
   if(m_for):
     mystring3 = """ select p0.name, t.name, m.round_num, Q.score 
@@ -144,7 +209,8 @@ def matches_forf(name):
   return forf
 
 def time_played(name):
-  t_m_play = check('t_m_play')
+  #t_m_play = check('t_m_play')
+  t_m_play = True
   time = []
   if(t_m_play):
     mystring4 = """ select (po.end_dt - po.start_dt)  as duration
@@ -162,7 +228,8 @@ def time_played(name):
 
 
 def surface_played(name):
-  surface = check('surface')
+  #surface = check('surface')
+  surface = True
   surface_p = []
   if(surface):
     mystring5 = """select c.surface, count(pi.match_id), count(CASE WHEN pi.winner THEN 1 END)
@@ -181,7 +248,8 @@ def surface_played(name):
   return surface_p
 
 def participate(name):
-  partic = check('t_in')
+  #partic = check('t_in')
+  partic = True
   part = []
   if(partic):
     mystring0 = """ select t.name, m.round_num, p_in.winner
