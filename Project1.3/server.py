@@ -25,9 +25,9 @@ import pygal
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
-DATABASEURI = "postgresql://rg3047:tennisrules@104.196.18.7/w4111"
-
-engine = create_engine(DATABASEURI)
+connection_string = open(".env", 'r').readlines()
+#print(connection_string)
+engine = create_engine(connection_string[0])
 
 
 @app.before_request
@@ -262,12 +262,7 @@ def spectator_add():
 def spectator_insert():
   print request.args
   values={}
-  query="""SELECT max(complex_id) from complex;"""
-  max_id=g.conn.execute(query)
-  for result in max_id:
-    next_id = int(result[0])+1
-  print next_id
-  values['complex_id']= next_id
+  values['complex_id']=int(request.form['complex_id'])
   values['complex_name']= str(request.form['complex_name'])
   values['city'] = str(request.form['city'])
   values['country'] = str(request.form['country'])
@@ -291,6 +286,7 @@ def tournament_details(t_name):
   cursor = g.conn.execute(mystring , (t_name,))
   names = []
   for result in cursor:
+    print result
     names.append(result)  # can also be accessed using result[0]
   cursor.close()
   return names
