@@ -25,9 +25,9 @@ import pygal
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
-DATABASEURI = "postgresql://rg3047:tennisrules@104.196.18.7/w4111"
-
-engine = create_engine(DATABASEURI)
+connection_string = open(".env", 'r').readlines()
+#print(connection_string)
+engine = create_engine(connection_string[0])
 
 
 @app.before_request
@@ -291,6 +291,7 @@ def tournament_details(t_name):
   cursor = g.conn.execute(mystring , (t_name,))
   names = []
   for result in cursor:
+    print result
     names.append(result)  # can also be accessed using result[0]
   cursor.close()
   return names
