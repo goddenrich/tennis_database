@@ -85,7 +85,7 @@ def schedule():
   return render_template("schedule.html", **context)
   #return render_template("schedule.html")
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/schedule_post', methods=['GET', 'POST'])
 def schedule_post():
   print request.args
   name = request.form.get('comp_select')
@@ -102,7 +102,7 @@ def schedule_post():
     data.append(result)
   cursor.close
 
-  print(data)
+  #print(data)
 
   ###what if previous x returns nothing???
   context = {}
@@ -304,7 +304,7 @@ def player_post():
   context['weight'] = names[0][5]
   context['age'] = names[0][6].days/364 -1 
 
-  print(context)
+  #print(context)
 
   return render_template("player_add.html", **context)
 
